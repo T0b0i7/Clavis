@@ -13,8 +13,9 @@ export const env = createEnv({
     DATABASE_URL: z
       .string()
       .url()
-      .regex(LIBSQL_REGEX, "Must be a valid libsql URL"),
-    DATABASE_AUTH_TOKEN: z.string().min(20),
+      .regex(LIBSQL_REGEX, "Must be a valid libsql URL")
+      .optional(),
+    DATABASE_AUTH_TOKEN: z.string().min(20).optional(),
   },
   client: {},
   experimental__runtimeEnv: {

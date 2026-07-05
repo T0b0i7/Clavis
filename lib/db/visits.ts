@@ -13,6 +13,7 @@ const THROTTLE_SECONDS = 120;
 // Cached read — revalidates every 300s
 export const getVisitCount = unstable_cache(
   async () => {
+    if (!db) return 0;
     const row = await db.select().from(stats).where(eq(stats.key, KEY)).get();
     return row?.value ?? 0;
   },
@@ -35,6 +36,8 @@ export async function recordVisit() {
     sameSite: "lax",
     path: "/",
   });
+
+  if (!db) return;
 
   await db
     .insert(stats)

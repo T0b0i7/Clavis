@@ -1,0 +1,36 @@
+name: Notifier les abonnés
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: "Sujet de l'email"
+        required: true
+        default: "🆕 Clavis a été mis à jour !"
+      body:
+        description: "Contenu HTML"
+        required: true
+        default: |
+          <h2>Nouvelle mise à jour Clavis</h2>
+          <p>Une nouvelle version de Clavis vient d'être déployée.</p>
+          <p>
+            Voir les changements :
+            <a href="https://github.com/T0b0i7/Clavis/commits/main">
+              github.com/T0b0i7/Clavis
+            </a>
+          </p>
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Envoyer la notification aux abonnés
+        run: |
+          SUBJECT='${{ github.event.inputs.subject || '🆕 Clavis a été mis à jour !' }}'
+          BODY='${{ github.event.inputs.body || '<h2>Nouvelle mise à jour Clavis</h2><p>Une nouvelle version de Clavis vient d'\''être déployée.</p><p>Voir les changements : <a href="https://github.com/T0b0i7/Clavis/commits/main">github.com/T0b0i7/Clavis</a></p>' }}'
+
+          curl -X POST "${{ secrets.DEPLOY_URL }}/api/newsletter/notify?key=${{ secrets.NOTIFICATION_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -c -n --arg subject "$SUBJECT" --arg body "$BODY" '{subject: $subject, body: $body}')"

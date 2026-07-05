@@ -1,28 +1,12 @@
+/*
+ * Clavis � Free Typing Test with Mechanical Keyboard Sounds
+ * Created by Eucher O. ABATTI (T0b0i7) � � 2026
+ * License: ? Star https://github.com/T0b0i7/Clavis before use
+ */
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-
-interface Subscriber {
-  email: string;
-  date: string;
-  language: string;
-}
-
-const DATA_FILE = path.join(process.cwd(), "data", "subscribers.json");
-
-async function readSubscribers(): Promise<Subscriber[]> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, "utf-8");
-    return JSON.parse(raw) as Subscriber[];
-  } catch {
-    return [];
-  }
-}
-
-async function writeSubscribers(subscribers: Subscriber[]) {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-  await fs.writeFile(DATA_FILE, JSON.stringify(subscribers, null, 2), "utf-8");
-}
+import { db } from "@/lib/db";
+import { subscribers } from "@/lib/db/schema";
 
 export async function POST(request: Request) {
   try {
@@ -38,20 +22,31 @@ export async function POST(request: Request) {
       );
     }
 
-    const subscribers = await readSubscribers();
-    if (subscribers.some((s) => s.email === email)) {
+    if (!db) {
+      return NextResponse.json(
+        { error: "Base de données non configurée" },
+        { status: 503 }
+      );
+    }
+
+    const existing = await db
+      .select()
+      .from(subscribers)
+      .where(eq(subscribers.email, email))
+      .get();
+
+    if (existing) {
       return NextResponse.json(
         { error: "Déjà abonné" },
         { status: 409 }
       );
     }
 
-    subscribers.push({
+    await db.insert(subscribers).values({
       email,
       date: new Date().toISOString(),
       language: language ?? "french",
     });
-    await writeSubscribers(subscribers);
 
     return NextResponse.json({ success: true });
   } catch {
@@ -62,6 +57,21 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
-  return NextResponse.json({ message: "Newsletter API" });
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const key = searchParams.get("key");
+
+  if (key !== process.env.NOTIFICATION_KEY) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  if (!db) {
+    return NextResponse.json(
+      { error: "Base de données non configurée" },
+      { status: 503 }
+    );
+  }
+
+  const list = await db.select().from(subscribers);
+  return NextResponse.json({ count: list.length, subscribers: list });
 }

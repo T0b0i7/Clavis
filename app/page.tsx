@@ -81,6 +81,8 @@ export default function Page() {
               >
                 GitHub
               </a>
+              <span className="mx-2">•</span>
+              <span>© 2026 Eucher O. ABATTI (T0b0i7)</span>
             </p>
           </div>
         </footer>

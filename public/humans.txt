@@ -1,0 +1,13 @@
+/* TEAM */
+    Creator: Eucher O. ABATTI
+    GitHub: T0b0i7
+    Site: https://github.com/T0b0i7
+
+/* PROJECT */
+    Name: Clavis
+    Description: Free typing test with realistic mechanical keyboard sounds
+    License: Conditional — star required on GitHub before use
+    Copyright: © 2026 Eucher O. ABATTI. All rights reserved.
+
+/* THANKS */
+    You for putting a ⭐ on https://github.com/T0b0i7/Clavis

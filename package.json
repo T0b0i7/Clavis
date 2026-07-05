@@ -21,6 +21,7 @@
     "react-is": "^19.2.7",
     "react-remove-scroll": "^2.7.2",
     "recharts": "3.8.0",
+    "resend": "^6.17.1",
     "serwist": "^9.5.7",
     "shadcn": "^4.2.0",
     "tailwind-merge": "^3.5.0",
@@ -44,6 +45,8 @@
     "vitest": "^4.1.9"
   },
   "name": "clavis",
+  "author": "Eucher O. ABATTI (T0b0i7) — https://github.com/T0b0i7",
+  "copyright": "© 2026 Eucher O. ABATTI. Tous droits réservés. Licence conditionnelle — une ⭐ sur GitHub est requise.",
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
@@ -55,7 +58,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "ultracite check",
-    "fix": "ultracite fix"
+    "fix": "ultracite fix",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "type": "module",
   "version": "0.0.1",

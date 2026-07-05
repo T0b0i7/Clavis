@@ -1,26 +1,54 @@
 <a name="readme-top"></a>
 
-<img width="1440" alt="Clavis — typing test with mechanical keyboard sounds" src=".github/images/img_main.png" />
+<div align="center">
+  <img src="https://img.shields.io/github/stars/T0b0i7/Clavis?style=for-the-badge&logo=github&logoColor=white&label=⭐%20STAR%20LE%20PROJET&labelColor=000&color=gold" alt="Stars"/>
+  <br/><br/>
+  <img width="49%" alt="Clavis screenshot 1" src="images/screenshot-1.png" />
+  <img width="49%" alt="Clavis screenshot 2" src="images/screenshot-2.png" />
+  <img width="49%" alt="Clavis screenshot 3" src="images/screenshot-3.png" />
+  <img width="49%" alt="Clavis screenshot 4" src="images/screenshot-4.png" />
+  <img width="49%" alt="Clavis screenshot 5" src="images/screenshot-5.png" />
+</div>
+
+<br/>
+
+> **🚨 RÈGLE ABSOLUE — LIS AVANT DE CLONER OU TÉLÉCHARGER**
+>
+> Ce projet est protégé par une **licence conditionnelle**. En clonant, téléchargeant ou utilisant ce code, tu acceptes automatiquement les termes suivants :
+>
+> 1. **Tu dois ⭐ mettre une étoile (star)** sur le repository GitHub **AVANT** de cloner, télécharger ou utiliser le projet.
+> 2. **Pas de star = pas de licence** → tu n'as pas le droit d'utiliser, copier, modifier ou distribuer ce code.
+> 3. **Cette condition est irrévocable** et s'applique à tout utilisateur, développeur ou organisation.
+>
+> 👉 **https://github.com/T0b0i7/Clavis** ← va mettre ta star **MAINTENANT** avant de continuer.
 
 <p align="center">
   <h3 align="center">Clavis</h3>
   <p align="center">
-    A free typing test with realistic mechanical keyboard sounds
+    Un test de dactylographie immersif avec de **vrais sons de clavier mécanique**
     <br />
-    <a href="#features"><strong>Explore the features »</strong></a>
+    Créé par <strong>Eucher O. ABATTI (T0b0i7)</strong> — © 2026. Tous droits réservés.
     <br />
     <br />
-    <a href="#getting-started">Getting Started</a>
+    <a href="#features"><strong>Explorer les fonctionnalités »</strong></a>
+    <br/>
+    <a href="https://clavis-azure.vercel.app">🌐 Site live</a>
     &middot;
-    <a href="#tech-stack">Tech Stack</a>
-    &middot;
-    <a href="#contributing">Contributing</a>
+    <a href="https://github.com/T0b0i7/Clavis">💻 GitHub</a>
+    <br/>
+    <br/>
+    <strong>💻 Pour une expérience optimale, utilise un PC (ordinateur) —</strong> le clavier virtuel et les sons mécaniques sont conçus pour une utilisation sur desktop.
+    <br/>
+    <a href="https://clavis-azure.vercel.app"><strong>👉 Essaie-le sur ton PC</strong></a>
   </p>
 </p>
 
 <p align="center">
   <a href="https://github.com/T0b0i7/Clavis/stargazers">
     <img src="https://img.shields.io/github/stars/T0b0i7/Clavis?style=flat&logo=github" alt="GitHub Stars">
+  </a>
+  <a href="https://clavis-azure.vercel.app/api/downloads">
+    <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fclavis-azure.vercel.app%2Fapi%2Fdownloads&query=%24.count&label=t%C3%A9l%C3%A9chargements&color=blue" alt="Téléchargements">
   </a>
   <a href="https://github.com/T0b0i7/Clavis/forks">
     <img src="https://img.shields.io/github/forks/T0b0i7/Clavis?style=flat" alt="GitHub Forks">
@@ -38,6 +66,14 @@
     <img src="https://img.shields.io/github/issues-pr/T0b0i7/Clavis?color=brightgreen&label=PRs" alt="Pull Requests">
   </a>
   <img src="https://img.shields.io/github/deployments/T0b0i7/Clavis/Production?logo=vercel&label=Website" alt="Deployment Status">
+</p>
+
+<p align="center">
+  <a href="https://clavis-azure.vercel.app/download">
+    <img src="https://img.shields.io/badge/⬇️%20TÉLÉCHARGER%20LE%20PROJET-18181B?style=for-the-badge&logo=github" alt="Télécharger">
+  </a>
+  <br/>
+  <sub>⬆️ Le compteur s'incrémente automatiquement à chaque clic</sub>
 </p>
 
 <details>
@@ -91,11 +127,12 @@ Settings persist in `localStorage`. Personal bests are tracked per mode and disp
 - [shadcn/ui](https://ui.shadcn.com/): Pre-styled component recipes.
 - [Motion](https://motion.dev/): Animation library for React (FLIP cursor transitions, spring physics).
 - [Recharts](https://recharts.org/): Composable charting library for WPM-over-time graphs.
-- [Drizzle ORM](https://orm.drizzle.team/) + Turso (LibSQL): Type-safe database layer for visit tracking.
+- [Drizzle ORM](https://orm.drizzle.team/) + [Turso](https://turso.tech/) (LibSQL): Type-safe cloud database for visit tracking and newsletter subscribers.
+- [Resend](https://resend.com/): Email API for automated subscriber notifications.
 - [Biome](https://biomejs.dev/): Fast linter and formatter.
 - [Serwist](https://serwist.pages.dev/): PWA / service worker toolkit.
 - [Vitest](https://vitest.dev/): Unit testing framework.
-- [Vercel](https://vercel.com/): Deployment platform.
+- [Vercel](https://vercel.com/) / [Netlify](https://netlify.com/): Deployment platforms.
 
 </details><br/>
 
@@ -133,6 +170,9 @@ Settings persist in `localStorage`. Personal bests are tracked per mode and disp
 | `bun run typecheck` | Type-check with TypeScript |
 | `bun test` | Run unit tests (Vitest) |
 | `bun run test:watch` | Run tests in watch mode |
+| `npm run db:generate` | Generate a Drizzle migration after schema changes |
+| `npm run db:push` | Push schema to Turso database |
+| `npm run db:studio` | Open Drizzle Studio (web UI) |
 
 ## 🔧 Recent Improvements
 
@@ -153,10 +193,17 @@ The following enhancements have been applied to the project:
 - **Keyboard shortcuts**: Press `R` to restart a test, `Esc` to unfocus the input — displayed directly in the UI
 - **Test commands**: `npm test` and `npm run test:watch` added to package.json
 
+### Newsletter & Database
+- **Turso cloud database**: Visit counter and newsletter subscribers now stored in a remote Turso (LibSQL) database via Drizzle ORM
+- **Newsletter API**: `POST /api/newsletter` for subscriptions (validation + anti-doublon), `GET /api/newsletter?key=...` for admin listing
+- **Auto-notifications**: `POST /api/newsletter/notify?key=...` sends emails to all subscribers via Resend
+- **GitHub Action**: Automatic subscriber notifications on every `push main` — configurable via `DEPLOY_URL` and `NOTIFICATION_KEY` secrets
+- **Database optional**: If `DATABASE_URL` is not set, the app gracefully falls back without crashing
+
 ### Project Structure
 ```
 src/
-├── app/              # Pages, layout, SEO, service worker
+├── app/              # Pages, layout, SEO, service worker, API routes
 ├── components/
 │   ├── layout/       # App chrome (header/footer)
 │   ├── settings/     # Settings drawer, font picker, theme picker
@@ -166,6 +213,8 @@ src/
 ├── data/             # Quotes database
 ├── hooks/            # useTypingTest (main logic), useMediaQuery
 ├── lib/              # Types, utils, audio, words, WPM, validation, DB
+├── drizzle/          # Database migrations
+├── .github/          # GitHub Actions workflows
 └── public/           # Sounds, images, service worker, languages
 ```
 
@@ -187,6 +236,21 @@ Contributions are what make the open source community such an amazing place to l
 | **🔧 Manual Build** | Create an optimized production build. | `bun run build` |
 | **▲ Vercel (Recommended)** | Deploy instantly on the Vercel platform. | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FT0b0i7%2FClavis) |
 | **🌐 Netlify** | Deploy easily on Netlify. | [![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/T0b0i7/Clavis) |
+
+### Required Environment Variables
+
+When deploying, set these in your platform dashboard (Vercel / Netlify):
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | Turso database URL (`libsql://...`) |
+| `DATABASE_AUTH_TOKEN` | Turso authentication token |
+| `RESEND_API_KEY` | Resend API key for email notifications |
+| `NOTIFICATION_KEY` | Secret key to protect the notify endpoint |
+
+For GitHub Actions auto-notifications, also set these **repository secrets**:
+- `DEPLOY_URL` — your deployed site URL
+- `NOTIFICATION_KEY` — same key as above
 
 For more details, check the [Next.js deployment docs](https://nextjs.org/docs/deployment).
 

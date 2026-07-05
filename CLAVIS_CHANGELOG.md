@@ -124,6 +124,43 @@ Toutes les URLs mises à jour vers `https://github.com/T0b0i7/Clavis` :
 
 ---
 
+## 🗄️ Base de données (Turso + Drizzle)
+
+### Configuration
+- **Turso** (libSQL cloud, free tier) — base `clavis` hébergée sur `aws-ap-northeast-1`
+- **Variables d'env** : `DATABASE_URL`, `DATABASE_AUTH_TOKEN`, `NOTIFICATION_KEY`
+- **ORM** : Drizzle — schéma dans `lib/db/schema.ts`
+- **Migrations** : dossier `drizzle/` versionné (généré avec `drizzle-kit`)
+
+### Tables
+| Table | Colonnes | Usage |
+|---|---|---|
+| `stats` | `key` (PK), `value` | Compteur de visites |
+| `subscribers` | `id` (PK), `email` (unique), `date`, `language` | Newsletter |
+
+### Scripts disponibles
+```bash
+npm run db:generate    # Générer une migration
+npm run db:push        # Pousser le schéma sur Turso
+npm run db:studio      # Interface web Drizzle Studio
+```
+
+### API Newsletter
+- `POST /api/newsletter` — inscription abonné (validation + anti-doublon)
+- `GET /api/newsletter?key=...` — liste des abonnés (admin)
+- `POST /api/newsletter/notify?key=...` — notification (prêt pour Resend/SendGrid)
+
+### GitHub Action
+- `.github/workflows/notify-subscribers.yml` — déclenché sur `push main`
+- Appelle l'API de notification avec le sujet et le contenu
+- Variables secrètes requises : `DEPLOY_URL`, `NOTIFICATION_KEY`
+
+### Stockage
+- ~~`data/subscribers.json`~~ → **Turso** (base de données distante)
+- La DB est optionnelle : si `DATABASE_URL` manque, le code retourne `0` ou `null` sans crash
+
+---
+
 ## 📁 Structure du projet
 
 ```
@@ -169,9 +206,11 @@ Clavis/
 
 ```bash
 npm run dev          # Lancer le serveur de dev
-npm test             # 26 tests unitaires
+npm test             # Tests unitaires
 npm run typecheck    # Vérification TypeScript
 npm run build        # Build production
+npm run db:push      # Pousser le schéma sur Turso
+npm run db:studio    # Interface Drizzle Studio
 ```
 
 ## Déploiement
@@ -181,5 +220,8 @@ git remote add origin https://github.com/T0b0i7/Clavis.git
 git push -u origin main
 
 # Puis déploie sur Vercel ou Netlify
-# Variables d'env optionnelles : DATABASE_URL, DATABASE_AUTH_TOKEN (Turso)
+# Variables d'env optionnelles :
+#   DATABASE_URL       (Turso — libsql://...)
+#   DATABASE_AUTH_TOKEN (Turso)
+#   NOTIFICATION_KEY    (clé secrète pour l'API newsletter)
 ```

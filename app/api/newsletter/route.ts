@@ -50,9 +50,11 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Erreur inconnue";
+    console.error("Newsletter error:", msg);
     return NextResponse.json(
-      { error: "Erreur serveur" },
+      { error: "Erreur serveur", detail: msg },
       { status: 500 }
     );
   }

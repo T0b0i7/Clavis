@@ -1,8 +1,9 @@
-/*
- * Clavis — Free Typing Test with Mechanical Keyboard Sounds
- * Created by Eucher O. ABATTI (T0b0i7) — © 2026
- * License: ? Star https://github.com/T0b0i7/Clavis before use
+ï»¿/*
+ * Clavis - Free Typing Test with Mechanical Keyboard Sounds
+ * Created by Eucher O. ABATTI (T0b0i7) - (c) 2026
+ * License: Star https://github.com/T0b0i7/Clavis before use
  */
+
 /** Inline keycap-grid icon that reads --primary, --kb-dark, --kb-light live. */
 export function ClavisLogo({
   className,

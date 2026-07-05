@@ -1,15 +1,4 @@
-/*
- * Clavis — Free Typing Test with Mechanical Keyboard Sounds
- * ==========================================================
- * Created by Eucher O. ABATTI (T0b0i7)
- * © 2026. All rights reserved.
- *
- * Conditional License: You MUST ⭐ star the GitHub repository
- * (https://github.com/T0b0i7/Clavis) BEFORE cloning, downloading,
- * or using this software. No star = no license.
- */
-
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist_Mono, Space_Grotesk } from "next/font/google";
 
 import "./globals.css";

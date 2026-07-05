@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAppChrome } from "@/components/layout/app-chrome";
+import { Newsletter } from "@/components/newsletter";
 import { useSettings } from "@/components/settings/settings-provider";
 import { TypingTest } from "@/components/typing/typing-test";
 import { Keyboard } from "@/components/ui/keyboard";
@@ -69,18 +70,19 @@ export default function Page() {
               volume={soundVolume}
             />
           </div>
-          <p className="text-muted-foreground/40 text-xs">
-            The source code is available on{" "}
-            <a
-              className="text-muted-foreground/60 underline-offset-2 hover:text-foreground hover:underline"
-              href="https://github.com/T0b0i7/Clavis"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              GitHub
-            </a>
-            .
-          </p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <Newsletter />
+            <p className="text-muted-foreground/40 text-xs">
+              <a
+                className="text-muted-foreground/60 underline-offset-2 hover:text-foreground hover:underline"
+                href="https://github.com/T0b0i7/Clavis"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                GitHub
+              </a>
+            </p>
+          </div>
         </footer>
       )}
     </div>

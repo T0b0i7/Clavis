@@ -32,6 +32,9 @@ pnpm-debug.log*
 .env
 .env*.local
 
+# subscriber data (contains emails)
+/data/subscribers.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

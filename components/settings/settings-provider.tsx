@@ -82,7 +82,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [liveStats, setLiveStatsState] = useState(true);
   const [faahMode, setFaahModeState] = useState(false);
   const [ghostMode, setGhostModeState] = useState(false);
-  const [language, setLanguageState] = useState<Language>("english");
+  const [language, setLanguageState] = useState<Language>("french");
   // One-time hydration from localStorage on mount
   useEffect(() => {
     const validThemes = new Set<string>(THEME_OPTIONS.map((t) => t.id));

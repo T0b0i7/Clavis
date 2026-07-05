@@ -78,6 +78,15 @@ export function TypingTest(props: TypingTestProps) {
     onRestart,
   } = useTypingTest({ ...props, language, onWrongKey });
 
+  // Restart test when language changes to regenerate word pool
+  const prevLanguageRef = useRef(language);
+  useEffect(() => {
+    if (prevLanguageRef.current !== language) {
+      prevLanguageRef.current = language;
+      onRestart();
+    }
+  }, [language]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Global keyboard shortcuts: re-focus, restart (R), unfocus (Escape)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {

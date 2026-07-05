@@ -36,6 +36,9 @@ pnpm-debug.log*
 /data/subscribers.json
 /data/subscribers_*.json
 
+# session notes
+SESSION_*.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

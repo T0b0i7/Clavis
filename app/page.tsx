@@ -73,7 +73,7 @@ export default function Page() {
             The source code is available on{" "}
             <a
               className="text-muted-foreground/60 underline-offset-2 hover:text-foreground hover:underline"
-              href="https://github.com/aayushbharti/keythm"
+              href="https://github.com/T0b0i7/Clavis"
               rel="noopener noreferrer"
               target="_blank"
             >

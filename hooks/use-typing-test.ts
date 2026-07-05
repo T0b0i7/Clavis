@@ -44,6 +44,7 @@ type ResetOverrides = Partial<{
 }>;
 
 interface UseTypingTestProps {
+  language?: string;
   onFinished?: (finished: boolean) => void;
   onFocusChange?: (focused: boolean) => void;
   onTypingActiveChange?: (active: boolean) => void;
@@ -52,6 +53,7 @@ interface UseTypingTestProps {
 }
 
 export function useTypingTest({
+  language,
   onFinished,
   onTypingActiveChange,
   onFocusChange,
@@ -175,11 +177,12 @@ export function useTypingTest({
       }
     ): Promise<string[]> => {
       const isHard = opts.difficulty === "hard";
+      const lang = language === "french" ? "french" : "english";
       // Use cached pool if same difficulty tier
       if (wordPoolRef.current && wordPoolRef.current.hard === isHard) {
         return generateWordsFromPool(wordPoolRef.current.words, count, opts);
       }
-      const pool = await fetchLanguageWords(isHard);
+      const pool = await fetchLanguageWords(isHard, lang);
       if (pool.length > 0) {
         wordPoolRef.current = { hard: isHard, words: pool };
         return generateWordsFromPool(pool, count, opts);
@@ -187,7 +190,7 @@ export function useTypingTest({
       // Fallback to random-words if fetch fails
       return generateWords(count, opts);
     },
-    []
+    [language]
   );
 
   // ── resetTestWith ────────────────────────────────────────────────────────

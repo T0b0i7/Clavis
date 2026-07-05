@@ -210,7 +210,7 @@ function SiteHeader() {
           {/* GitHub — primary pill */}
           <motion.a
             className="flex items-center gap-2 rounded-full bg-foreground px-4 py-1.5 font-medium text-[13px] text-background"
-            href="https://github.com/aayushbharti/keythm"
+            href="https://github.com/T0b0i7/Clavis"
             rel="noopener noreferrer"
             target="_blank"
             whileTap={{ scale: 0.96 }}

@@ -19,7 +19,7 @@ interface TypingTestProps {
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: orchestrator component
 export function TypingTest(props: TypingTestProps) {
-  const { liveStats, faahMode, ghostMode } = useSettings();
+  const { language, liveStats, faahMode, ghostMode } = useSettings();
   const faahAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const onWrongKey = useCallback(() => {
@@ -76,7 +76,7 @@ export function TypingTest(props: TypingTestProps) {
     onNumbersToggle,
     onDifficultyToggle,
     onRestart,
-  } = useTypingTest({ ...props, onWrongKey });
+  } = useTypingTest({ ...props, language, onWrongKey });
 
   // Global keyboard shortcuts: re-focus, restart (R), unfocus (Escape)
   useEffect(() => {

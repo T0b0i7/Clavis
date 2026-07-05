@@ -19,25 +19,25 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/aayushbharti/keythm/stargazers">
-    <img src="https://img.shields.io/github/stars/aayushbharti/keythm?style=flat&logo=github" alt="GitHub Stars">
+  <a href="https://github.com/T0b0i7/Clavis/stargazers">
+    <img src="https://img.shields.io/github/stars/T0b0i7/Clavis?style=flat&logo=github" alt="GitHub Stars">
   </a>
-  <a href="https://github.com/aayushbharti/keythm/forks">
-    <img src="https://img.shields.io/github/forks/aayushbharti/keythm?style=flat" alt="GitHub Forks">
+  <a href="https://github.com/T0b0i7/Clavis/forks">
+    <img src="https://img.shields.io/github/forks/T0b0i7/Clavis?style=flat" alt="GitHub Forks">
   </a>
-  <a href="https://github.com/aayushbharti/keythm/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/aayushbharti/keythm?color=dddddd&labelColor=000000" alt="License">
+  <a href="https://github.com/T0b0i7/Clavis/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/T0b0i7/Clavis?color=dddddd&labelColor=000000" alt="License">
   </a>
   <a href="https://www.typescriptlang.org/">
-    <img src="https://img.shields.io/github/languages/top/aayushbharti/keythm?&logoColor=%23007ACC&label=TypeScript" alt="Top Language">
+    <img src="https://img.shields.io/github/languages/top/T0b0i7/Clavis?&logoColor=%23007ACC&label=TypeScript" alt="Top Language">
   </a>
-  <a href="https://github.com/aayushbharti/keythm/commits/main">
-    <img src="https://img.shields.io/github/commit-activity/t/aayushbharti/keythm?style=flat&logo=github" alt="Commits">
+  <a href="https://github.com/T0b0i7/Clavis/commits/main">
+    <img src="https://img.shields.io/github/commit-activity/t/T0b0i7/Clavis?style=flat&logo=github" alt="Commits">
   </a>
-  <a href="https://github.com/aayushbharti/keythm/pulls">
-    <img src="https://img.shields.io/github/issues-pr/aayushbharti/keythm?color=brightgreen&label=PRs" alt="Pull Requests">
+  <a href="https://github.com/T0b0i7/Clavis/pulls">
+    <img src="https://img.shields.io/github/issues-pr/T0b0i7/Clavis?color=brightgreen&label=PRs" alt="Pull Requests">
   </a>
-  <img src="https://img.shields.io/github/deployments/aayushbharti/keythm/Production?logo=vercel&label=Website" alt="Deployment Status">
+  <img src="https://img.shields.io/github/deployments/T0b0i7/Clavis/Production?logo=vercel&label=Website" alt="Deployment Status">
 </p>
 
 <details>
@@ -185,8 +185,8 @@ Contributions are what make the open source community such an amazing place to l
 | Method | Description | Action |
 |--------|-------------|--------|
 | **🔧 Manual Build** | Create an optimized production build. | `bun run build` |
-| **▲ Vercel (Recommended)** | Deploy instantly on the Vercel platform. | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Faayushbharti%2Fkeythm) |
-| **🌐 Netlify** | Deploy easily on Netlify. | [![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/aayushbharti/keythm) |
+| **▲ Vercel (Recommended)** | Deploy instantly on the Vercel platform. | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FT0b0i7%2FClavis) |
+| **🌐 Netlify** | Deploy easily on Netlify. | [![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/T0b0i7/Clavis) |
 
 For more details, check the [Next.js deployment docs](https://nextjs.org/docs/deployment).
 

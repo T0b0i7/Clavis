@@ -4,6 +4,7 @@ import { CaretRight, Command, X } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import {
   FONT_OPTIONS,
+  LANGUAGE_OPTIONS,
   THEME_OPTIONS,
   useSettings,
 } from "@/components/settings/settings-provider";
@@ -35,6 +36,8 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
     setAccent,
     font,
     setFont,
+    language,
+    setLanguage,
     showKeyboard,
     setShowKeyboard,
     soundEnabled,
@@ -155,6 +158,29 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
                 label="Faah mode"
                 onToggle={() => setFaahMode(!faahMode)}
               />
+            </Section>
+
+            {/* ── Language ── */}
+            <Section title="Language">
+              <Row label="Language">
+                <div className="flex gap-1">
+                  {LANGUAGE_OPTIONS.map((opt) => (
+                    <button
+                      className={cn(
+                        "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                        language === opt.id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-foreground/[0.06] text-muted-foreground hover:bg-foreground/10"
+                      )}
+                      key={opt.id}
+                      onClick={() => setLanguage(opt.id)}
+                      type="button"
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </Row>
             </Section>
           </div>
 

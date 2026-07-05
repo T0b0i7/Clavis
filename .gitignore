@@ -34,6 +34,7 @@ pnpm-debug.log*
 
 # subscriber data (contains emails)
 /data/subscribers.json
+/data/subscribers_*.json
 
 # typescript
 *.tsbuildinfo

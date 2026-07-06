@@ -11,7 +11,11 @@ import { useState } from "react";
 import { useSettings } from "@/components/settings/settings-provider";
 import { cn } from "@/lib/utils";
 
-export function Newsletter() {
+interface NewsletterProps {
+  onFocusChange?: (focused: boolean) => void;
+}
+
+export function Newsletter({ onFocusChange }: NewsletterProps) {
   const { language } = useSettings();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -68,10 +72,12 @@ export function Newsletter() {
           "focus:border-primary/30 focus:outline-none focus:ring-1 focus:ring-primary/20",
           "transition-colors"
         )}
+        onBlur={() => onFocusChange?.(false)}
         onChange={(e) => {
           setEmail(e.target.value);
           setStatus("idle");
         }}
+        onFocus={() => onFocusChange?.(true)}
         placeholder={isFrench ? "Votre email" : "Your email"}
         type="email"
         value={email}

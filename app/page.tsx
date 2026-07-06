@@ -13,6 +13,7 @@ export default function Page() {
   const [isFinished, setIsFinished] = useState(false);
   const [typingFocused, setTypingFocused] = useState(true);
   const [restartKey, setRestartKey] = useState(0);
+  const [newsletterFocused, setNewsletterFocused] = useState(false);
   const { showKeyboard, soundEnabled, soundVolume, accent } = useSettings();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function Page() {
           onFinished={setIsFinished}
           onFocusChange={setTypingFocused}
           onTypingActiveChange={handleTypingActiveChange}
-          pauseTypingInputRefocus={settingsOpen}
+          pauseTypingInputRefocus={settingsOpen || newsletterFocused}
         />
       </main>
 
@@ -71,7 +72,7 @@ export default function Page() {
             />
           </div>
           <div className="flex flex-col items-center gap-3 sm:flex-row">
-            <Newsletter />
+            <Newsletter onFocusChange={setNewsletterFocused} />
             <p className="flex flex-wrap items-center gap-2 text-muted-foreground/40 text-xs">
               <a
                 className="text-muted-foreground/60 underline-offset-2 hover:text-foreground hover:underline"

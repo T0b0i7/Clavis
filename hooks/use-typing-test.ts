@@ -215,7 +215,7 @@ export function useTypingTest({
 
       setQuoteAuthor(null);
       if (m === "quote") {
-        const { words: newWords, author } = getQuote(ql);
+        const { words: newWords, author } = getQuote(ql, language);
         setWords(newWords);
         setQuoteAuthor(author);
       } else {

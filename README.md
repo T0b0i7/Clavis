@@ -254,5 +254,35 @@ For GitHub Actions auto-notifications, also set these **repository secrets**:
 
 For more details, check the [Next.js deployment docs](https://nextjs.org/docs/deployment).
 
+<br/>
+
+---
+
+## ❓ FAQ
+
+### 📜 Quelle est la licence du projet ?
+
+Clavis utilise une **licence conditionnelle personnalisée**. Ce n'est **pas du MIT**. Le code est open source et visible publiquement, mais pour l'utiliser, le cloner ou le télécharger, tu dois d'abord ⭐ **mettre une étoile (star)** sur le repository GitHub. Pas de star = pas de licence d'utilisation.
+
+C'est une façon simple de soutenir le projet et de mesurer l'intérêt de la communauté 🙏
+
+### 🤝 Puis-je contribuer / collaborer ?
+
+**Oui, absolument !** Les contributions sont les bienvenues. Tu peux :
+1. ⭐ Mettre une star sur le repository
+2. Forker le projet
+3. Faire tes modifications
+4. Soumettre une **Pull Request** — je l'examinerai avec plaisir
+
+Le code est ouvert à l'amélioration collective !
+
+### 🎨 Les thèmes ont été créés ou importés ? C'est du Tailwind ?
+
+Les **6 thèmes** (Classic, Mint, Royal, Dolch, Sand, Scarlet) ont été **créés directement dans le code** — ce ne sont pas des imports externes. Chaque thème utilise des **couleurs OKLCH** (format moderne plus précis que RGB/HSL) et modifie toute l'interface : clavier virtuel 3D, boutons, accents, texte. Ils sont gérés via des variables CSS personnalisées avec un attribut `data-accent`.
+
+**Et oui, c'est du Tailwind CSS v4 !** Toute la mise en page utilise Tailwind, combiné à des animations CSS personnalisées. Le rendu 3D du clavier est fait en **CSS pur** avec `transform: perspective()` et des ombres — pas de Three.js.
+
+Pour les sons mécaniques, c'est du **Web Audio API** en JavaScript pur avec des échantillons audio réels de switches mécaniques. Chaque touche a son propre son unique 🎧
+
 <br />
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

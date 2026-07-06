@@ -72,7 +72,7 @@ export default function Page() {
           </div>
           <div className="flex flex-col items-center gap-3 sm:flex-row">
             <Newsletter />
-            <p className="text-muted-foreground/40 text-xs">
+            <p className="flex flex-wrap items-center gap-2 text-muted-foreground/40 text-xs">
               <a
                 className="text-muted-foreground/60 underline-offset-2 hover:text-foreground hover:underline"
                 href="https://github.com/T0b0i7/Clavis"
@@ -81,8 +81,23 @@ export default function Page() {
               >
                 GitHub
               </a>
-              <span className="mx-2">•</span>
-              <span>© 2026 Eucher O. ABATTI (T0b0i7)</span>
+              <span className="opacity-50">|</span>
+              <a
+                className="text-muted-foreground/60 underline-offset-2 hover:text-red-500 hover:underline"
+                href="#"
+                rel="noopener noreferrer"
+                target="_blank"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigator.clipboard.writeText("+229 0157002427");
+                  alert("Numero Mobile Money copie : +229 0157002427");
+                }}
+                title="Faire un don par Mobile Money"
+              >
+                Don
+              </a>
+              <span className="opacity-50">|</span>
+              <span>(c) 2026 Eucher O. ABATTI (T0b0i7)</span>
             </p>
           </div>
         </footer>

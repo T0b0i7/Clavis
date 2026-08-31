@@ -14,7 +14,8 @@ export default function Page() {
   const [typingFocused, setTypingFocused] = useState(true);
   const [restartKey, setRestartKey] = useState(0);
   const [newsletterFocused, setNewsletterFocused] = useState(false);
-  const { showKeyboard, soundEnabled, soundVolume, accent } = useSettings();
+  const { showKeyboard, soundEnabled, soundVolume, accent, keyboardLayout } =
+    useSettings();
 
   useEffect(() => {
     homeLogoHandlerRef.current = () => {
@@ -66,6 +67,7 @@ export default function Page() {
               enableHaptics
               enableSound={soundEnabled}
               forceActive={soundEnabled && !showKeyboard}
+              layoutName={keyboardLayout}
               physicalKeysEnabled={typingFocused}
               theme={accent}
               volume={soundVolume}
@@ -86,13 +88,13 @@ export default function Page() {
               <a
                 className="text-muted-foreground/60 underline-offset-2 hover:text-red-500 hover:underline"
                 href="#"
-                rel="noopener noreferrer"
-                target="_blank"
                 onClick={(e) => {
                   e.preventDefault();
                   navigator.clipboard.writeText("+229 0157002427");
                   alert("Numero Mobile Money copie : +229 0157002427");
                 }}
+                rel="noopener noreferrer"
+                target="_blank"
                 title="Faire un don par Mobile Money"
               >
                 Don

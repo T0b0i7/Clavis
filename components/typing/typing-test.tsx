@@ -14,6 +14,8 @@ import { ResultsScreen } from "@/components/typing/results";
 import { TestControls } from "@/components/typing/test-controls";
 import { WordItem } from "@/components/typing/word-item";
 import { useTypingTest } from "@/hooks/use-typing-test";
+import { t } from "@/lib/i18n";
+import { LEARN_LESSONS } from "@/lib/learn";
 import { cn } from "@/lib/utils";
 
 interface TypingTestProps {
@@ -26,6 +28,7 @@ interface TypingTestProps {
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: orchestrator component
 export function TypingTest(props: TypingTestProps) {
   const { language, liveStats, faahMode, ghostMode } = useSettings();
+  const [learnId, setLearnId] = useState(1);
   const faahAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const onWrongKey = useCallback(() => {
@@ -82,7 +85,7 @@ export function TypingTest(props: TypingTestProps) {
     onNumbersToggle,
     onDifficultyToggle,
     onRestart,
-  } = useTypingTest({ ...props, language, onWrongKey });
+  } = useTypingTest({ ...props, language, learnLessonId: learnId, onWrongKey });
 
   // Restart test when language changes to regenerate word pool
   const prevLanguageRef = useRef(language);
@@ -102,11 +105,7 @@ export function TypingTest(props: TypingTestProps) {
         return;
       }
       // R → restart test (when not actively typing a word)
-      if (
-        (e.key === "r" || e.key === "R") &&
-        typed.length === 0 &&
-        !started
-      ) {
+      if ((e.key === "r" || e.key === "R") && typed.length === 0 && !started) {
         e.preventDefault();
         onRestart();
         return;
@@ -138,7 +137,7 @@ export function TypingTest(props: TypingTestProps) {
     );
   }
 
-  let wordsOpacity = 0.15;
+  let wordsOpacity = 0.45;
   if (resetting) {
     wordsOpacity = 0;
   } else if (isFocused) {
@@ -177,6 +176,44 @@ export function TypingTest(props: TypingTestProps) {
         timeOption={timeOption}
         wordOption={wordOption}
       />
+      {mode === "learn" && (
+        <div className="flex w-full max-w-3xl flex-col gap-2 rounded-xl border border-foreground/10 bg-foreground/[0.02] p-3">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-xs">
+              {t("learn.lesson", language)} {learnId} —{" "}
+              {LEARN_LESSONS.find((l) => l.id === learnId)?.title}
+            </span>
+            <span className="text-[11px] text-muted-foreground">
+              {LEARN_LESSONS.find((l) => l.id === learnId)?.description}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {LEARN_LESSONS.map((l) => (
+              <button
+                className={cn(
+                  "rounded-full px-2.5 py-1 font-medium text-[11px] transition-colors",
+                  learnId === l.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10"
+                )}
+                key={l.id}
+                onClick={() => {
+                  setLearnId(l.id);
+                  setTimeout(() => onRestart(), 50);
+                }}
+                type="button"
+              >
+                {l.id}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-1.5 text-[10px] text-muted-foreground/60">
+            {t("learn.keys", language)}:{" "}
+            {LEARN_LESSONS.find((l) => l.id === learnId)?.keys.join(" · ") ||
+              "mixte"}
+          </div>
+        </div>
+      )}
 
       {/* Words display */}
       <div className="relative w-full">
@@ -238,13 +275,15 @@ export function TypingTest(props: TypingTestProps) {
 
         <div
           className={cn(
-            "relative h-[7.8rem] w-full overflow-hidden text-2xl leading-relaxed",
+            "relative h-[7.8rem] w-full overflow-hidden rounded-[12px] text-2xl leading-relaxed focus-within:ring-2 focus-within:ring-primary/20",
             isActivelyTyping && "is-typing"
           )}
           ref={wordsContainerRef}
           style={{ fontFamily: "var(--typing-font)" }}
+          tabIndex={-1}
         >
           <input
+            aria-label="Zone de frappe"
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
@@ -260,6 +299,9 @@ export function TypingTest(props: TypingTestProps) {
             spellCheck={false}
             value={typed}
           />
+          <span aria-live="polite" className="sr-only">
+            {started ? `${wpm} mots par minute, ${accuracy}% précision` : ""}
+          </span>
 
           <LayoutGroup id="words">
             <motion.div
@@ -330,7 +372,7 @@ export function TypingTest(props: TypingTestProps) {
                     size={14}
                     weight="duotone"
                   />
-                  <span>Click or press any key to focus</span>
+                  <span>{t("hint.clickToFocus", language)}</span>
                 </div>
               </motion.div>
             )}
@@ -339,7 +381,7 @@ export function TypingTest(props: TypingTestProps) {
       </div>
 
       {/* Restart button */}
-      <RestartButton controlsVisible={controlsVisible} onRestart={onRestart} />
+      <RestartButton controlsVisible={controlsVisible || started} onRestart={onRestart} />
 
       {/* Keyboard shortcuts hint */}
       <motion.div
@@ -359,19 +401,19 @@ export function TypingTest(props: TypingTestProps) {
             <kbd className="rounded-[4px] bg-foreground/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
               enter
             </kbd>
-            <span className="ml-0.5">end test</span>
+            <span className="ml-0.5">{t("hint.endTest", language)}</span>
           </>
         ) : (
           <>
             <kbd className="rounded-[4px] bg-foreground/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
               r
             </kbd>
-            <span className="ml-0.5">restart</span>
+            <span className="ml-0.5">{t("hint.restart", language)}</span>
             <span className="mx-1.5 text-muted-foreground/20">·</span>
             <kbd className="rounded-[4px] bg-foreground/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
               esc
             </kbd>
-            <span className="ml-0.5">unfocus</span>
+            <span className="ml-0.5">{t("hint.unfocus", language)}</span>
             <span className="mx-1.5 text-muted-foreground/20">·</span>
             <kbd className="rounded-[4px] bg-foreground/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
               tab
@@ -380,7 +422,7 @@ export function TypingTest(props: TypingTestProps) {
             <kbd className="rounded-[4px] bg-foreground/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
               enter
             </kbd>
-            <span className="ml-0.5">restart</span>
+            <span className="ml-0.5">{t("hint.restart", language)}</span>
           </>
         )}
       </motion.div>

@@ -16,7 +16,12 @@ import {
 import type { KeyboardThemeName } from "@/components/ui/keyboard";
 import { syncClavisFavicon } from "@/lib/favicon-client";
 import { FONT_OPTIONS, type TypingFont } from "@/lib/font-options";
-import { LANGUAGE_OPTIONS, type Language } from "@/lib/i18n";
+import type { Language } from "@/lib/i18n";
+import {
+  KEYBOARD_LAYOUT_OPTIONS,
+  type KeyboardLayoutName,
+  layoutForLanguage,
+} from "@/lib/keyboard-layouts";
 import { THEME_OPTIONS } from "@/lib/theme-options";
 
 export {
@@ -25,20 +30,30 @@ export {
   type TypingFont,
 } from "@/lib/font-options";
 export { LANGUAGE_OPTIONS, type Language } from "@/lib/i18n";
+export {
+  KEYBOARD_LAYOUT_OPTIONS,
+  type KeyboardLayoutName,
+} from "@/lib/keyboard-layouts";
 export { THEME_OPTIONS } from "@/lib/theme-options";
 
 interface SettingsContextType {
   accent: KeyboardThemeName;
   faahMode: boolean;
+  fingerColors: boolean;
   font: TypingFont;
   fontCssFamily: string;
   ghostMode: boolean;
+  heatmap: boolean;
+  keyboardLayout: KeyboardLayoutName;
   language: Language;
   liveStats: boolean;
   setAccent: (c: KeyboardThemeName) => void;
   setFaahMode: (v: boolean) => void;
+  setFingerColors: (v: boolean) => void;
   setFont: (f: TypingFont) => void;
   setGhostMode: (v: boolean) => void;
+  setHeatmap: (v: boolean) => void;
+  setKeyboardLayout: (k: KeyboardLayoutName) => void;
   setLanguage: (l: Language) => void;
   setLiveStats: (v: boolean) => void;
   setShowKeyboard: (v: boolean) => void;
@@ -89,9 +104,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [faahMode, setFaahModeState] = useState(false);
   const [ghostMode, setGhostModeState] = useState(false);
   const [language, setLanguageState] = useState<Language>("french");
+  const [keyboardLayout, setKeyboardLayoutState] =
+    useState<KeyboardLayoutName>("azerty");
+  const [fingerColors, setFingerColorsState] = useState(false);
+  const [heatmap, setHeatmapState] = useState(false);
   // One-time hydration from localStorage on mount
   useEffect(() => {
     const validThemes = new Set<string>(THEME_OPTIONS.map((t) => t.id));
+    const validLayouts = new Set<string>(
+      KEYBOARD_LAYOUT_OPTIONS.map((o) => o.id)
+    );
     const rawAccent = localStorage.getItem("tc-accent");
     const savedFont = localStorage.getItem("tc-font") as TypingFont | null;
     const savedShowKeyboard = localStorage.getItem("tc-show-keyboard");
@@ -100,10 +122,33 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const savedRealtimeWpm = localStorage.getItem("tc-realtime-wpm");
     const savedFaahMode = localStorage.getItem("tc-faah-mode");
     const savedGhostMode = localStorage.getItem("tc-ghost-mode");
-    const savedLanguage = localStorage.getItem("tc-language") as Language | null;
+    const savedLanguage = localStorage.getItem(
+      "tc-language"
+    ) as Language | null;
+    const savedLayout = localStorage.getItem(
+      "tc-keyboard-layout"
+    ) as KeyboardLayoutName | null;
+    const savedFinger = localStorage.getItem("tc-finger-colors");
+    const savedHeat = localStorage.getItem("tc-heatmap");
 
-    if (savedLanguage && (savedLanguage === "english" || savedLanguage === "french")) {
+    if (
+      savedLanguage &&
+      (savedLanguage === "english" || savedLanguage === "french")
+    ) {
       setLanguageState(savedLanguage);
+      if (savedLayout && validLayouts.has(savedLayout)) {
+        setKeyboardLayoutState(savedLayout);
+      } else {
+        setKeyboardLayoutState(layoutForLanguage(savedLanguage));
+      }
+    } else if (savedLayout && validLayouts.has(savedLayout)) {
+      setKeyboardLayoutState(savedLayout);
+    }
+    if (savedFinger !== null) {
+      setFingerColorsState(savedFinger === "true");
+    }
+    if (savedHeat !== null) {
+      setHeatmapState(savedHeat === "true");
     }
 
     const initialAccent =
@@ -188,6 +233,28 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setLanguage = (l: Language) => {
     setLanguageState(l);
     localStorage.setItem("tc-language", l);
+    // Auto-sync clavier si l'utilisateur n'a pas forcé un layout différent
+    const auto = layoutForLanguage(l);
+    const currentStored = localStorage.getItem("tc-keyboard-layout-manual");
+    if (currentStored !== "true") {
+      setKeyboardLayoutState(auto);
+      localStorage.setItem("tc-keyboard-layout", auto);
+    }
+  };
+
+  const setKeyboardLayout = (k: KeyboardLayoutName) => {
+    setKeyboardLayoutState(k);
+    localStorage.setItem("tc-keyboard-layout", k);
+    localStorage.setItem("tc-keyboard-layout-manual", "true");
+  };
+
+  const setFingerColors = (v: boolean) => {
+    setFingerColorsState(v);
+    localStorage.setItem("tc-finger-colors", String(v));
+  };
+  const setHeatmap = (v: boolean) => {
+    setHeatmapState(v);
+    localStorage.setItem("tc-heatmap", String(v));
   };
 
   const fontCssFamily =
@@ -215,6 +282,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         setGhostMode,
         language,
         setLanguage,
+        keyboardLayout,
+        setKeyboardLayout,
+        fingerColors,
+        setFingerColors,
+        heatmap,
+        setHeatmap,
       }}
     >
       {children}

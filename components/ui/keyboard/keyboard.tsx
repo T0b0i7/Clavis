@@ -34,7 +34,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { QWERTY_LAYOUT } from "@/lib/keyboard-layouts";
+import { useSettings } from "@/components/settings/settings-provider";
+import { FINGER_COLORS, fingerForKey } from "@/lib/finger-map";
+import { getHeatmapLevel } from "@/lib/key-stats";
+import {
+  KEYBOARD_LAYOUTS,
+  type KeyboardLayoutName,
+  QWERTY_LAYOUT,
+} from "@/lib/keyboard-layouts";
 import { cn } from "@/lib/utils";
 
 import { KeyboardProvider, useKeyboardContext } from "./context";
@@ -55,9 +62,10 @@ export function Keyboard({
   forceActive = false,
   physicalKeysEnabled = true,
   volume = 0.5,
-}: KeyboardProps) {
+  layoutName = "qwerty",
+}: KeyboardProps & { layoutName?: KeyboardLayoutName }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const layout = QWERTY_LAYOUT;
+  const layout = KEYBOARD_LAYOUTS[layoutName] ?? QWERTY_LAYOUT;
 
   return (
     <KeyboardProvider
@@ -359,12 +367,31 @@ interface KeyProps {
 function Key({ width = 50, children, className, keyCode }: KeyProps) {
   const { themeName, pressedKeys, pressKey, releaseKey, triggerPointerHaptic } =
     useKeyboardContext();
+  let fingerColors = false;
+  let heatmap = false;
+  try {
+    const s = useSettings();
+    fingerColors = s.fingerColors;
+    heatmap = s.heatmap;
+  } catch {
+    // outside provider (e.g. isolated preview)
+  }
   const isPressed = keyCode ? pressedKeys.has(keyCode) : false;
   const pointerSessionActiveRef = useRef(false);
   const [isPointerDownVisual, setIsPointerDownVisual] = useState(false);
   const visuallyPressed = isPressed || isPointerDownVisual;
   const keyVariantSlot = resolveKeyVariant(themeName, keyCode);
-  const keyVariant = KEYBOARD_THEMES[themeName].variants[keyVariantSlot];
+  let keyVariant = KEYBOARD_THEMES[themeName].variants[keyVariantSlot];
+  // Finger colors override (Dactylo pedagogy)
+  if (fingerColors && keyCode) {
+    const f = fingerForKey(keyCode);
+    if (f) {
+      const c = FINGER_COLORS[f];
+      keyVariant = { bg: c, text: "#ffffff" };
+    }
+  }
+  // Heatmap override intensifies with errors
+  const heatLevel = heatmap && keyCode ? getHeatmapLevel(keyCode) : 0;
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (!keyCode || event.button !== 0) {
@@ -419,15 +446,22 @@ function Key({ width = 50, children, className, keyCode }: KeyProps) {
           className={cn(
             "relative z-10 h-[37px] rounded-[6px] border border-black/40 border-t-0 transition-all duration-100",
             "flex select-none flex-col items-center justify-between gap-0.5 p-1 font-medium text-[9px]",
+            heatLevel === 1 && "ring-1 ring-orange-400/60",
+            heatLevel === 2 && "ring-2 ring-orange-500/70",
+            heatLevel === 3 && "ring-2 ring-red-500",
             className
           )}
           style={{
             width: `${width - 13}px`,
             backgroundColor: keyVariant.bg,
             color: keyVariant.text,
+            opacity: heatLevel ? 0.9 + heatLevel * 0.03 : 1,
           }}
         >
           {children}
+          {heatmap && heatLevel > 0 && (
+            <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
+          )}
         </div>
 
         <div

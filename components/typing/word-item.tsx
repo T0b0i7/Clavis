@@ -43,10 +43,10 @@ export const WordItem = memo(function WordItem({
           "after:absolute after:right-0 after:bottom-0 after:left-0 after:h-[2px] after:rounded-full after:bg-destructive/50"
       )}
       ref={isActive ? elemRef : undefined}
-      style={dimmed ? { opacity: 0.05 } : undefined}
+      style={dimmed ? { opacity: 0.3 } : undefined}
     >
       {word.split("").map((char, cIdx) => {
-        let color = "text-muted-foreground/40";
+        let color = "text-foreground/45";
         if ((isPast || isActive) && cIdx < displayInput.length) {
           color =
             displayInput[cIdx] === char

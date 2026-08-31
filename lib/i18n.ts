@@ -19,6 +19,7 @@ const translations: Translations = {
   "mode.words": { english: "words", french: "mots" },
   "mode.quote": { english: "quote", french: "citation" },
   "mode.zen": { english: "zen", french: "zen" },
+  "mode.learn": { english: "learn", french: "apprendre" },
   "mode.title": { english: "Mode", french: "Mode" },
 
   // Time options
@@ -45,6 +46,54 @@ const translations: Translations = {
 
   // Settings
   "settings.title": { english: "Settings", french: "Paramètres" },
+  "settings.appearance": { english: "Appearance", french: "Apparence" },
+  "settings.appearance.mode": { english: "Mode", french: "Mode" },
+  "settings.appearance.themes": { english: "Themes", french: "Thèmes" },
+  "settings.appearance.font": { english: "Font", french: "Police" },
+  "settings.keyboardSection": { english: "Keyboard", french: "Clavier" },
+  "settings.keyboard.layout": { english: "Layout", french: "Disposition" },
+  "settings.keyboard.layoutHint": {
+    english: "Auto: French → AZERTY, English → QWERTY. Change anytime.",
+    french: "Auto : Français → AZERTY, English → QWERTY. Modifiable à tout moment.",
+  },
+  "settings.keyboard.show": { english: "Show keyboard", french: "Clavier visuel" },
+  "settings.keyboard.showDesc": {
+    english: "Virtual keyboard below the test",
+    french: "Clavier virtuel sous le test",
+  },
+  "settings.keyboard.sound": { english: "Sound", french: "Son" },
+  "settings.keyboard.soundDesc": {
+    english: "Mechanical key sounds",
+    french: "Sons de touches mécaniques",
+  },
+  "settings.gameplay": { english: "Gameplay", french: "Jeu" },
+  "settings.gameplay.liveStats": { english: "Live stats", french: "Stats en direct" },
+  "settings.gameplay.liveStatsDesc": {
+    english: "Show WPM and accuracy while typing",
+    french: "Afficher WPM et précision pendant la frappe",
+  },
+  "settings.gameplay.ghost": { english: "Ghost mode", french: "Mode fantôme" },
+  "settings.gameplay.ghostDesc": {
+    english: "Dim upcoming words for focus",
+    french: "Estomper les mots à venir",
+  },
+  "settings.gameplay.faah": { english: "Faah mode", french: "Mode Faah" },
+  "settings.gameplay.faahDesc": {
+    english: "Sound on wrong keystrokes",
+    french: "Son sur les erreurs",
+  },
+  "settings.gameplay.finger": { english: "Finger colors", french: "Couleurs par doigt" },
+  "settings.gameplay.fingerDesc": {
+    english: "Color keys by finger (Dactylo pedagogy)",
+    french: "Colorer les touches par doigt (pédagogie Dactylo)",
+  },
+  "settings.gameplay.heatmap": { english: "Heatmap", french: "Carte de chaleur" },
+  "settings.gameplay.heatmapDesc": {
+    english: "Highlight keys with frequent errors",
+    french: "Surligner les touches à erreurs fréquentes",
+  },
+  "settings.languageSection": { english: "Language", french: "Langue" },
+  "settings.language.label": { english: "Language", french: "Langue" },
   "settings.theme": { english: "Theme", french: "Thème" },
   "settings.accent": { english: "Accent", french: "Accent" },
   "settings.font": { english: "Font", french: "Police" },
@@ -84,6 +133,15 @@ const translations: Translations = {
     english: "end test",
     french: "fin du test",
   },
+  "hint.pressToToggle": { english: "to toggle settings", french: "pour ouvrir les paramètres" },
+
+  // Controls
+  "controls.punctuation": { english: "punctuation", french: "ponctuation" },
+  "controls.numbers": { english: "numbers", french: "nombres" },
+
+  // Learn
+  "learn.lesson": { english: "Lesson", french: "Leçon" },
+  "learn.keys": { english: "Keys", french: "Touches" },
 
   // Footer
   "footer.sourceCode": {

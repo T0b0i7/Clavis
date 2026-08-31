@@ -6,8 +6,10 @@
 
 "use client";
 
-import { At, Hash } from "@phosphor-icons/react";
+import { At, Hash, Keyboard } from "@phosphor-icons/react";
 import { LayoutGroup } from "motion/react";
+import { useSettings } from "@/components/settings/settings-provider";
+import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   groupClass,
@@ -36,37 +38,43 @@ export function DesktopToolbar({
   onNumbersToggle,
   onDifficultyToggle,
 }: TestControlsProps) {
+  const { keyboardLayout, language } = useSettings();
+  const tr = (k: string) => t(k, language);
   return (
     <LayoutGroup id="toolbar">
       <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 rounded-full bg-foreground/[0.04] px-2.5 py-1.5 font-medium text-[10px] text-muted-foreground/60 uppercase tracking-widest">
+          <Keyboard size={12} />
+          {keyboardLayout}
+        </div>
         {/* Toggles */}
         <div className={groupClass}>
           <Toggle active={punctuation} onClick={onPunctuationToggle}>
             <At size={13} weight="duotone" />
-            punctuation
+            {tr("controls.punctuation")}
           </Toggle>
           <Toggle active={numbers} onClick={onNumbersToggle}>
             <Hash size={13} weight="duotone" />
-            numbers
+            {tr("controls.numbers")}
           </Toggle>
           <Sep />
           <Toggle
             active={difficulty === "easy"}
             onClick={() => onDifficultyToggle("easy")}
           >
-            easy
+            {tr("difficulty.easy")}
           </Toggle>
           <Toggle
             active={difficulty === "hard"}
             onClick={() => onDifficultyToggle("hard")}
           >
-            hard
+            {tr("difficulty.hard")}
           </Toggle>
         </div>
 
         {/* Mode selector */}
         <div className={groupClass}>
-          {MODES.map(({ value, icon: Icon, label }) => (
+          {MODES.map(({ value, icon: Icon }) => (
             <Selector
               active={mode === value}
               key={value}
@@ -74,7 +82,7 @@ export function DesktopToolbar({
               onClick={() => onModeChange(value)}
             >
               <Icon size={13} />
-              {label}
+              {tr(`mode.${value}`)}
             </Selector>
           ))}
         </div>

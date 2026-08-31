@@ -7,7 +7,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { recordKeyResult } from "@/lib/key-stats";
 import { fetchLanguageWords } from "@/lib/languages";
+import { LEARN_LESSONS, lessonWords } from "@/lib/learn";
 import { getQuote, type QuoteLength } from "@/lib/quotes";
 import {
   DIFFICULTY_STORAGE_KEY,
@@ -51,6 +53,7 @@ type ResetOverrides = Partial<{
 
 interface UseTypingTestProps {
   language?: string;
+  learnLessonId?: number;
   onFinished?: (finished: boolean) => void;
   onFocusChange?: (focused: boolean) => void;
   onTypingActiveChange?: (active: boolean) => void;
@@ -60,6 +63,7 @@ interface UseTypingTestProps {
 
 export function useTypingTest({
   language,
+  learnLessonId,
   onFinished,
   onTypingActiveChange,
   onFocusChange,
@@ -182,6 +186,32 @@ export function useTypingTest({
         difficulty: Difficulty | undefined;
       }
     ): Promise<string[]> => {
+      // Learn mode: use lesson words
+      if (mode === "learn" && learnLessonId) {
+        const lesson = LEARN_LESSONS.find((l) => l.id === learnLessonId);
+        if (lesson) {
+          if (lesson.id === 18) {
+            const isHard = opts.difficulty === "hard";
+            const lang = language === "french" ? "french" : "english";
+            if (wordPoolRef.current && wordPoolRef.current.hard === isHard) {
+              return generateWordsFromPool(wordPoolRef.current.words, count, {
+                ...opts,
+                language: lang,
+              });
+            }
+            const pool = await fetchLanguageWords(isHard, lang);
+            if (pool.length > 0) {
+              wordPoolRef.current = { hard: isHard, words: pool };
+              return generateWordsFromPool(pool, count, {
+                ...opts,
+                language: lang,
+              });
+            }
+            return generateWords(count, { ...opts, language: lang });
+          }
+          return lessonWords(lesson, count);
+        }
+      }
       const isHard = opts.difficulty === "hard";
       const lang = language === "french" ? "french" : "english";
       // Use cached pool if same difficulty tier
@@ -191,12 +221,12 @@ export function useTypingTest({
       const pool = await fetchLanguageWords(isHard, lang);
       if (pool.length > 0) {
         wordPoolRef.current = { hard: isHard, words: pool };
-        return generateWordsFromPool(pool, count, opts);
+        return generateWordsFromPool(pool, count, { ...opts, language: lang });
       }
       // Fallback to random-words if fetch fails
-      return generateWords(count, opts);
+      return generateWords(count, { ...opts, language: lang });
     },
-    [language]
+    [language, mode, learnLessonId]
   );
 
   // ── resetTestWith ────────────────────────────────────────────────────────
@@ -309,7 +339,8 @@ export function useTypingTest({
     const ql = storedQuoteLength ?? defaultQuoteLength;
     const p = storedPunctuation ?? defaultPunctuation;
     const n = storedNumbers ?? defaultNumbers;
-    const d = storedDifficulty === undefined ? defaultDifficulty : storedDifficulty;
+    const d =
+      storedDifficulty === undefined ? defaultDifficulty : storedDifficulty;
 
     if (storedMode !== undefined) {
       setMode(storedMode);
@@ -611,6 +642,13 @@ export function useTypingTest({
         const charIndex = typed.length;
         const isWrong =
           charIndex >= currentWord.length || e.key !== currentWord[charIndex];
+        // Heatmap per physical key
+        try {
+          recordKeyResult(
+            (e as unknown as { code: string }).code || e.key,
+            !isWrong
+          );
+        } catch {}
         if (isWrong) {
           onWrongKey?.();
         }

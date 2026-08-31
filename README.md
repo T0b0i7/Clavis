@@ -100,18 +100,21 @@ The audio feedback system uses real mechanical keyboard samples triggered via th
 
 | Area | What you get |
 |------|----------------|
-| **Test modes** | Time (15s–120s), word count, quotes (length presets), zen |
+| **Test modes** | Time (15s–120s), word count, quotes (length presets), zen + **learn** (18 leçons Dactylo progressives) |
+| **Languages** | **Français / English full i18n** — UI, hints, résultats et mots 100% traduits. `Français → AZERTY`, `English → QWERTY` auto |
+| **Keyboard layouts** | **QWERTY / AZERTY / QWERTZ / BÉPO** — layout visuel synchro avec la langue, switch instantané + badge `⌨ AZERTY` dans la toolbar |
 | **Mechanical key sounds** | Realistic per-key audio feedback via Web Audio API; multiple keyboard themes with distinct sound profiles |
-| **Virtual keyboard** | Interactive on-screen keyboard with 3D CSS rendering — highlights keys as you type, shows pressed state with realistic depth animation |
+| **Virtual keyboard** | Interactive 3D CSS — highlights, depth, **finger colors** (couleurs par doigt) + **heatmap** (touches à erreurs fréquentes) |
 | **Results** | WPM, raw speed, accuracy, character breakdown, consistency, elapsed time, WPM-over-time chart (Recharts) |
 | **Keyboard themes** | 6 color schemes — Classic, Mint, Royal, Dolch, Sand, Scarlet — each tints the entire UI and keyboard |
 | **Typing fonts** | 9 fonts — Geist Mono, JetBrains Mono, Fira Code, IBM Plex Mono, Source Code Pro, Inter Tight, Space Grotesk, Nunito, Atkinson Hyperlegible |
-| **Settings** | Theme (light/dark/system), accent color, font picker, show keyboard, sound volume, live WPM, ghost mode, Faah mode |
+| **Settings** | Theme, accent, font, **layout**, keyboard toggle, sound, **finger colors**, **heatmap**, live WPM, ghost mode, Faah mode — drawer `Rounded & Spacious` |
 | **Haptics** | Optional vibration feedback on supported hardware via Web Haptics API |
 | **Anti-cheat** | 10+ validation checks detecting auto-typers, macros, AFK, and impossible stats |
 | **PWA** | Installable as a Progressive Web App — works offline with service worker |
 | **Keyboard shortcuts** | `R` to restart, `Esc` to unfocus, `Tab+Enter` restart combo |
 | **Export** | Download results as JSON or CSV |
+| **Accessibility** | Contraste WCAG AA, `focus ring`, `aria-live` WPM, clavier masqué sur mobile |
 
 Settings persist in `localStorage`. Personal bests are tracked per mode and displayed on each result.
 
@@ -176,9 +179,16 @@ Settings persist in `localStorage`. Personal bests are tracked per mode and disp
 
 ## 🔧 Recent Improvements
 
-The following enhancements have been applied to the project:
+### v2.1 — Dactylo + i18n + UI Polish (2026-08-31)
+- **Langue = Clavier** : `Français→AZERTY` / `English→QWERTY` auto, 4 layouts (QWERTY/AZERTY/QWERTZ/BÉPO), badge `⌨` live dans la toolbar, persist `tc-keyboard-layout`
+- **Learn mode** : 18 leçons Dactylo (repos → mots fréquents FR/EN → accents) + picker + `lib/learn.ts`
+- **Pédagogie clavier** : `finger colors` (8 couleurs par doigt) + `heatmap` (3 niveaux d'erreurs) + `lib/finger-map.ts` + `lib/key-stats.ts`
+- **Full i18n** : tout passe en `t(key, language)` — Settings, toolbar (`chrono/mots/ponctuation`), hints, learn, volume. Test `FR` génère `french.json` + ponctuation `« »`
+- **Design Settings** : `Rounded & Spacious` (20px drawer, 10px rows, pill `rounded-full` pour layouts, grid 2-col mobile)
+- **Accessibilité P0** : contraste `text-foreground/45` (WCAG AA), `dimmed 0.30`, `focus ring`, `aria-live`, clavier masqué sur mobile
+- **Français propre** : `frenchPunctuationMarks` (`—` `«»`), guillemets FR, fallback mots
 
-### Bug Fixes
+### Bug Fixes (v2.0)
 - **React 19 safety**: `frozenStatsRef` computation moved from inline render to a `useEffect` — prevents side effects during render which could cause issues with React 19 concurrent features
 - **Audio deduplication**: Fixed `KeyV` and `KeyC` sharing the same audio sample offset — each key now has a unique sound
 - **Quotes data cleanup**: Corrected 10 malformed quotations where the author field contained text fragments instead of attribution names; fixed spelling errors
@@ -189,7 +199,7 @@ The following enhancements have been applied to the project:
 - **TypeScript target**: Updated `tsconfig.json` from `ES2017` to `ES2022` — properly aligned with Next.js 16 and React 19
 - **Test suite**: Added Vitest with 26 unit tests covering anti-cheat validation (17 tests) and WPM counting logic (9 tests)
 
-### New Features
+### New Features (v2.0)
 - **Keyboard shortcuts**: Press `R` to restart a test, `Esc` to unfocus the input — displayed directly in the UI
 - **Test commands**: `npm test` and `npm run test:watch` added to package.json
 

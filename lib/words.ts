@@ -7,6 +7,17 @@
 import { generate } from "random-words";
 
 const punctuationMarks = [".", ",", "!", "?", ";", ":"] as const;
+const frenchPunctuationMarks = [
+  ".",
+  ",",
+  "!",
+  "?",
+  ";",
+  ":",
+  "—",
+  "«",
+  "»",
+] as const;
 
 export type Difficulty = "easy" | "hard";
 
@@ -44,7 +55,7 @@ function pickWithoutReplacement(pool: string[], count: number): string[] {
 
 function applyModifiers(
   raw: string[],
-  options?: { punctuation?: boolean; numbers?: boolean }
+  options?: { punctuation?: boolean; numbers?: boolean; language?: string }
 ): string[] {
   return raw.map((word) => {
     if (options?.numbers && Math.random() < 0.15) {
@@ -53,19 +64,23 @@ function applyModifiers(
     if (!options?.punctuation) {
       return word;
     }
+    const isFrench = options?.language === "french";
+    const marks = isFrench ? frenchPunctuationMarks : punctuationMarks;
     const rand = Math.random();
     if (rand < 0.1) {
-      return (
-        word +
-        punctuationMarks[Math.floor(Math.random() * punctuationMarks.length)]
-      );
+      const m = marks[Math.floor(Math.random() * marks.length)] as string;
+      if (isFrench && (m === "«" || m === "»")) {
+        return m === "«" ? `« ${word}` : `${word} »`;
+      }
+      return word + m;
     }
     if (rand < 0.15) {
-      return `"${word}"`;
+      return isFrench ? `« ${word} »` : `"${word}"`;
     }
     if (rand < 0.2) {
       return word.charAt(0).toUpperCase() + word.slice(1);
     }
+    // French: occasional accent-rich capitalisation preserved
     return word;
   });
 }
@@ -77,7 +92,7 @@ function applyModifiers(
 export function generateWordsFromPool(
   pool: string[],
   count: number,
-  options?: { punctuation?: boolean; numbers?: boolean }
+  options?: { punctuation?: boolean; numbers?: boolean; language?: string }
 ): string[] {
   const raw = pickWithoutReplacement(pool, count);
   return applyModifiers(raw, options);
@@ -93,6 +108,7 @@ export function generateWords(
     punctuation?: boolean;
     numbers?: boolean;
     difficulty?: Difficulty;
+    language?: string;
   }
 ): string[] {
   let raw: string[];

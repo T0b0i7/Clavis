@@ -6,7 +6,13 @@
 
 "use client";
 
-import { Clock, Mountains, Quotes, TextAa } from "@phosphor-icons/react";
+import {
+  Clock,
+  GraduationCap,
+  Mountains,
+  Quotes,
+  TextAa,
+} from "@phosphor-icons/react";
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 import type { QuoteLength } from "@/lib/quotes";
@@ -18,6 +24,7 @@ export const MODES = [
   { value: "words", icon: TextAa, label: "words" },
   { value: "quote", icon: Quotes, label: "quote" },
   { value: "zen", icon: Mountains, label: "zen" },
+  { value: "learn", icon: GraduationCap, label: "learn" },
 ] as const;
 
 export const pillEase = { duration: 0.2, ease: [0.23, 1, 0.32, 1] } as const;
@@ -190,7 +197,7 @@ export function SubOptionStack({
 }) {
   return (
     <>
-      {(["time", "words", "quote", "zen"] as const).map((m) => {
+      {(["time", "words", "quote", "zen", "learn"] as const).map((m) => {
         const isActive = mode === m;
         return (
           <div

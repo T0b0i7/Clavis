@@ -139,11 +139,11 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
                 <div className="mb-1.5 text-[11px] font-medium text-muted-foreground/70">
                   {tr("settings.keyboard.layout")}
                 </div>
-                <div className="grid grid-cols-2 gap-1.5 rounded-[16px] bg-foreground/[0.04] p-1 md:flex md:rounded-full">
+                <div className="grid grid-cols-2 gap-1.5 rounded-[16px] bg-foreground/[0.04] p-1">
                   {KEYBOARD_LAYOUT_OPTIONS.map((opt) => (
                     <button
                       className={cn(
-                        "whitespace-nowrap rounded-full px-3.5 py-2 text-center text-[11px] font-semibold tracking-wide transition-all duration-200 md:flex-1 md:py-1.5",
+                        "whitespace-nowrap rounded-full px-3 py-2 text-center text-[11px] font-semibold tracking-wide transition-all duration-200",
                         keyboardLayout === opt.id
                           ? "bg-primary text-primary-foreground shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
                           : "text-muted-foreground/60 hover:bg-foreground/[0.06] hover:text-foreground"

@@ -39,6 +39,7 @@ import { FINGER_COLORS, fingerForKey } from "@/lib/finger-map";
 import { getHeatmapLevel } from "@/lib/key-stats";
 import {
   KEYBOARD_LAYOUTS,
+  type KeyLabel,
   type KeyboardLayoutName,
   QWERTY_LAYOUT,
 } from "@/lib/keyboard-layouts";
@@ -97,7 +98,7 @@ function KeyboardKeys() {
   const { layout } = useKeyboardContext();
 
   /** Helper: resolve label for a key from the current layout, falling back to QWERTY. */
-  function label(keyCode: string): [string, string?] | undefined {
+  function label(keyCode: string): KeyLabel | undefined {
     return layout[keyCode] ?? QWERTY_LAYOUT[keyCode];
   }
 
@@ -335,7 +336,7 @@ function DualKey({
   width,
 }: {
   keyCode: KEYCODE;
-  labels?: [string, string?];
+  labels?: KeyLabel;
   width?: number;
 }) {
   if (!labels) {

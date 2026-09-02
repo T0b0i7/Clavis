@@ -4,7 +4,7 @@
  * License: Star https://github.com/T0b0i7/Clavis before use
  */
 
-export type KeyLabel = [normal: string, shift?: string];
+export type KeyLabel = [normal: string, shift?: string, altGr?: string];
 export type KeyboardLayout = Partial<Record<string, KeyLabel>>;
 export type KeyboardLayoutName = "qwerty" | "azerty" | "qwertz" | "bepo";
 

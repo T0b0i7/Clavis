@@ -4,7 +4,7 @@
  * License: Star https://github.com/T0b0i7/Clavis before use
  */
 
-export type WpmCountMode = "time" | "words" | "quote" | "zen";
+export type WpmCountMode = "time" | "words" | "quote" | "zen" | "learn";
 
 export interface WpmCounts {
   allCorrectChars: number;

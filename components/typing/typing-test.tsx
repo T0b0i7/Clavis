@@ -276,13 +276,6 @@ export function TypingTest(props: TypingTestProps) {
           </div>
         </motion.div>
 
-        {/* Hint mobile : PC first */}
-        <div className="flex w-full justify-center md:hidden">
-          <span className="rounded-full bg-foreground/[0.04] px-3 py-1 text-center text-[10px] leading-none text-muted-foreground/60">
-            💻 Clavis est bcp mieux sur PC — pas optimisé pour mobile
-          </span>
-        </div>
-
         {/* biome-ignore lint/a11y/useKeyWithClickEvents: tap to focus typing area */}
         {/* biome-ignore lint/a11y/noStaticElementInteractions: tap to focus typing area */}
         <div
@@ -400,10 +393,6 @@ export function TypingTest(props: TypingTestProps) {
                     </div>
                     <span className="text-center text-[11px] leading-tight text-muted-foreground/50 md:hidden">
                       Appuie pour faire apparaître le clavier
-                      <br />
-                      <span className="text-[10px] opacity-70">
-                        💻 Clavis est bcp mieux sur PC — pas fait pour mobile
-                      </span>
                     </span>
                   </div>
                 </motion.div>

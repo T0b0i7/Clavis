@@ -71,6 +71,9 @@ export function TypingTest(props: TypingTestProps) {
     wordsContainerRef,
     activeWordRef,
     handleKeyDown,
+    handleInputChange,
+    handleCompositionStart,
+    handleCompositionEnd,
     handleFocus,
     handleInputBlur,
     handleInputFocus,
@@ -273,115 +276,148 @@ export function TypingTest(props: TypingTestProps) {
           </div>
         </motion.div>
 
+        {/* Hint mobile : PC first */}
+        <div className="flex w-full justify-center md:hidden">
+          <span className="rounded-full bg-foreground/[0.04] px-3 py-1 text-center text-[10px] leading-none text-muted-foreground/60">
+            💻 Clavis est bcp mieux sur PC — pas optimisé pour mobile
+          </span>
+        </div>
+
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: tap to focus typing area */}
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: tap to focus typing area */}
         <div
-          className={cn(
-            "relative h-[7.8rem] w-full overflow-hidden rounded-[12px] text-2xl leading-relaxed focus-within:ring-2 focus-within:ring-primary/20",
-            isActivelyTyping && "is-typing"
-          )}
-          ref={wordsContainerRef}
+          className="relative w-full rounded-[12px] focus-within:ring-2 focus-within:ring-primary/20"
+          onClick={handleFocus}
           style={{ fontFamily: "var(--typing-font)" }}
-          tabIndex={-1}
         >
+          {/* Input invisible mais couvre toute la zone de frappe – hors overflow-hidden pour iOS/Android */}
           <input
             aria-label="Zone de frappe"
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
             autoFocus
-            className="absolute opacity-0"
+            className="absolute inset-0 z-10 h-full w-full caret-transparent opacity-[0.01]"
+            enterKeyHint="done"
+            inputMode="text"
             onBlur={handleInputBlur}
-            onChange={() => {
-              /* controlled input */
-            }}
+            onChange={handleInputChange}
+            onCompositionEnd={handleCompositionEnd}
+            onCompositionStart={handleCompositionStart}
             onFocus={handleInputFocus}
             onKeyDown={handleKeyDown}
             ref={inputRef}
             spellCheck={false}
+            style={{ fontSize: "16px" }}
             value={typed}
           />
           <span aria-live="polite" className="sr-only">
             {started ? `${wpm} mots par minute, ${accuracy}% précision` : ""}
           </span>
-
-          <LayoutGroup id="words">
-            <motion.div
-              animate={{
-                y: -rowOffset,
-                opacity: wordsOpacity,
-                filter: resetting ? "blur(4px)" : "blur(0px)",
-              }}
-              className="flex flex-wrap gap-x-2.5 gap-y-1"
-              transition={
-                resetting
-                  ? { duration: 0.15, ease: "easeOut" }
-                  : { type: "spring", stiffness: 300, damping: 30, mass: 0.8 }
-              }
-            >
-              {words.map((word, wIdx) => {
-                const isActive = wIdx === wordIndex;
-                const isPast = wIdx < wordIndex;
-                const isFuture = !(isActive || isPast);
-                let displayInput = "";
-                if (isActive) {
-                  displayInput = typed;
-                } else if (isPast) {
-                  displayInput = wordInputs[wIdx] ?? "";
-                }
-                const hasError = isPast && wordInputs[wIdx] !== word;
-                const currentWordDone =
-                  typed.length >= (words[wordIndex]?.length ?? 0);
-                const isNextWord = wIdx === wordIndex + 1;
-                const dimmed =
-                  ghostMode &&
-                  isFocused &&
-                  isFuture &&
-                  !(currentWordDone && isNextWord);
-
-                return (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: word+index combo ensures uniqueness for duplicate words
-                  <WordItem
-                    dimmed={dimmed}
-                    displayInput={displayInput}
-                    elemRef={isActive ? activeWordRef : undefined}
-                    hasError={hasError}
-                    isActive={isActive}
-                    isPast={isPast}
-                    key={`${word}-${wIdx}`}
-                    word={word}
-                  />
-                );
-              })}
-            </motion.div>
-          </LayoutGroup>
-
-          {/* Unfocused: blur overlay with prompt */}
-          <AnimatePresence>
-            {!isFocused && (
-              <motion.div
-                animate={{ opacity: 1 }}
-                className="absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-3 backdrop-blur-[3px]"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
-                key="focus-overlay"
-                onClick={() => inputRef.current?.focus()}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-center gap-2 text-muted-foreground text-xs backdrop-blur-sm">
-                  <Cursor
-                    className="text-muted-foreground/60"
-                    size={14}
-                    weight="duotone"
-                  />
-                  <span>{t("hint.clickToFocus", language)}</span>
-                </div>
-              </motion.div>
+          <div
+            className={cn(
+              "relative h-[7.8rem] w-full overflow-hidden rounded-[12px] text-2xl leading-relaxed",
+              isActivelyTyping && "is-typing"
             )}
-          </AnimatePresence>
+            ref={wordsContainerRef}
+            tabIndex={-1}
+          >
+            <LayoutGroup id="words">
+              <motion.div
+                animate={{
+                  y: -rowOffset,
+                  opacity: wordsOpacity,
+                  filter: resetting ? "blur(4px)" : "blur(0px)",
+                }}
+                className="flex flex-wrap gap-x-2.5 gap-y-1"
+                transition={
+                  resetting
+                    ? { duration: 0.15, ease: "easeOut" }
+                    : { type: "spring", stiffness: 300, damping: 30, mass: 0.8 }
+                }
+              >
+                {words.map((word, wIdx) => {
+                  const isActive = wIdx === wordIndex;
+                  const isPast = wIdx < wordIndex;
+                  const isFuture = !(isActive || isPast);
+                  let displayInput = "";
+                  if (isActive) {
+                    displayInput = typed;
+                  } else if (isPast) {
+                    displayInput = wordInputs[wIdx] ?? "";
+                  }
+                  const hasError = isPast && wordInputs[wIdx] !== word;
+                  const currentWordDone =
+                    typed.length >= (words[wordIndex]?.length ?? 0);
+                  const isNextWord = wIdx === wordIndex + 1;
+                  const dimmed =
+                    ghostMode &&
+                    isFocused &&
+                    isFuture &&
+                    !(currentWordDone && isNextWord);
+
+                  return (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: word+index combo ensures uniqueness for duplicate words
+                    <WordItem
+                      dimmed={dimmed}
+                      displayInput={displayInput}
+                      elemRef={isActive ? activeWordRef : undefined}
+                      hasError={hasError}
+                      isActive={isActive}
+                      isPast={isPast}
+                      key={`${word}-${wIdx}`}
+                      word={word}
+                    />
+                  );
+                })}
+              </motion.div>
+            </LayoutGroup>
+
+            {/* Unfocused: blur overlay with prompt – tap to focus (mobile) */}
+            <AnimatePresence>
+              {!isFocused && (
+                <motion.div
+                  animate={{ opacity: 1 }}
+                  className="absolute inset-0 z-20 flex cursor-pointer touch-manipulation flex-col items-center justify-center gap-3 backdrop-blur-[3px]"
+                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
+                  key="focus-overlay"
+                  onClick={() => inputRef.current?.focus()}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    inputRef.current?.focus();
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground text-xs backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      <Cursor
+                        className="text-muted-foreground/60"
+                        size={14}
+                        weight="duotone"
+                      />
+                      <span>{t("hint.clickToFocus", language)}</span>
+                    </div>
+                    <span className="text-center text-[11px] leading-tight text-muted-foreground/50 md:hidden">
+                      Appuie pour faire apparaître le clavier
+                      <br />
+                      <span className="text-[10px] opacity-70">
+                        💻 Clavis est bcp mieux sur PC — pas fait pour mobile
+                      </span>
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
       {/* Restart button */}
-      <RestartButton controlsVisible={controlsVisible || started} onRestart={onRestart} />
+      <RestartButton
+        controlsVisible={controlsVisible || started}
+        onRestart={onRestart}
+      />
 
       {/* Keyboard shortcuts hint */}
       <motion.div

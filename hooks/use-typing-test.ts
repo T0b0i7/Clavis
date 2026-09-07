@@ -130,6 +130,7 @@ export function useTypingTest({
   const screenFadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resetAnimRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finishTestRef = useRef<(() => void) | null>(null);
+  const isComposingRef = useRef(false);
 
   // ── Derived ──────────────────────────────────────────────────────────────
   const mtCounts = useMemo(
@@ -451,11 +452,10 @@ export function useTypingTest({
       return;
     }
     const prevInput = wordInputs[wordIndex - 1];
-    const prevWord = words[wordIndex - 1];
     setWordIndex((prev) => prev - 1);
     setTyped(prevInput);
     setWordInputs((prev) => prev.slice(0, -1));
-  }, [typed, wordIndex, wordInputs, words]);
+  }, [typed, wordIndex, wordInputs]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -699,6 +699,254 @@ export function useTypingTest({
     ]
   );
 
+  // ── Mobile input handling (virtual keyboard) ───────────────────────────────
+  // Virtual keyboards on Android/iOS don't reliably fire keydown.
+  // They fire `input`/`beforeinput` with inputType insertText, deleteContentBackward, etc.
+  // We handle them via onChange diff against `typed`.
+
+  const ensureStarted = useCallback(() => {
+    if (started || finished) {
+      return;
+    }
+    setStarted(true);
+    setStartTime(Date.now());
+    setShowControls(false);
+    onTypingActiveChange?.(true);
+    if (mode === "time") {
+      let elapsedTicks = 0;
+      timerRef.current = setInterval(() => {
+        elapsedTicks += 1;
+        elapsedSecondsRef.current = elapsedTicks;
+        const elapsedMin = elapsedTicks / 60;
+        const snapWpm =
+          elapsedMin > 0
+            ? Math.round(correctCharsRef.current / 5 / elapsedMin)
+            : 0;
+        const snapRaw =
+          elapsedMin > 0
+            ? Math.max(
+                Math.round(allTypedRef.current / 5 / elapsedMin),
+                snapWpm
+              )
+            : 0;
+        setWpmHistory((prev) => [
+          ...prev,
+          {
+            second: elapsedTicks,
+            wpm: snapWpm,
+            raw: snapRaw,
+            errors: errorsThisSecondRef.current,
+          },
+        ]);
+        errorsThisSecondRef.current = 0;
+        if (elapsedTicks >= timeOption) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          finishTestRef.current?.();
+        } else {
+          setTimeLeft(timeOption - elapsedTicks);
+        }
+      }, 1000);
+    }
+  }, [started, finished, mode, timeOption, onTypingActiveChange]);
+
+  const handleCompositionStart = useCallback(() => {
+    isComposingRef.current = true;
+  }, []);
+
+  const handleCompositionEnd = useCallback(
+    (e: React.CompositionEvent<HTMLInputElement>) => {
+      isComposingRef.current = false;
+      // Process final composed text as insertion
+      const data = e.data;
+      if (data && !finished) {
+        ensureStarted();
+        markTypingActive();
+        const nextTyped = typed + data;
+        setTyped(nextTyped);
+        allTypedRef.current += data.length;
+        const cw = words[wordIndex] ?? "";
+        const idx = typed.length;
+        for (let i = 0; i < data.length; i++) {
+          const ch = data[i];
+          const pos = idx + i;
+          const isWrong = pos >= cw.length || ch !== cw[pos];
+          if (isWrong) {
+            onWrongKey?.();
+          }
+          try {
+            recordKeyResult(ch, !isWrong);
+          } catch {}
+        }
+      }
+    },
+    [typed, words, wordIndex, finished, ensureStarted, markTypingActive, onWrongKey]
+  );
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (finished) {
+        return;
+      }
+      if (isComposingRef.current) {
+        return;
+      }
+      const newValue = e.target.value;
+
+      // No change (e.g. IME intermediate)
+      if (newValue === typed) {
+        return;
+      }
+
+      // Deletion (backspace) – newValue shorter than typed
+      if (newValue.length < typed.length) {
+        // If we deleted to empty and user had empty typed before, it means "go back to previous word"
+        // On mobile, backspace when typed === "" doesn't change value (stays ""), so this branch won't fire.
+        // That case is handled by onKeyDown Backspace fallback. Here we just sync.
+        // Track corrected errors for deleted chars
+        const cw = words[wordIndex] ?? "";
+        for (let i = newValue.length; i < typed.length; i++) {
+          const isWrong = i >= cw.length || typed[i] !== cw[i];
+          if (isWrong) {
+            correctedErrorsRef.current += 1;
+          }
+        }
+        ensureStarted();
+        markTypingActive();
+        setTyped(newValue);
+        return;
+      }
+
+      // Insertion – newValue longer
+      if (newValue.length > typed.length) {
+        const inserted = newValue.slice(typed.length);
+
+        // If inserted contains a space, treat as word submission (mobile spacebar)
+        if (inserted.includes(" ")) {
+          const spaceIdx = inserted.indexOf(" ");
+          const beforeSpace = inserted.slice(0, spaceIdx);
+          const fullAttempt = typed + beforeSpace;
+
+          if (fullAttempt.length === 0) {
+            // Leading space ignored – keep typed as-is plus remainder after space
+            const remainder = inserted.slice(spaceIdx + 1);
+            ensureStarted();
+            markTypingActive();
+            setTyped(remainder);
+            e.target.value = remainder;
+            return;
+          }
+
+          ensureStarted();
+          markTypingActive();
+          allTypedRef.current += 1; // space
+
+          const cw = words[wordIndex] ?? "";
+          for (let i = 0; i < Math.min(fullAttempt.length, cw.length); i++) {
+            if (fullAttempt[i] !== cw[i]) {
+              errorsThisSecondRef.current++;
+            }
+          }
+          if (fullAttempt.length > cw.length) {
+            errorsThisSecondRef.current++;
+          }
+
+          const nextInputs = [...wordInputs, fullAttempt];
+          const nextIndex = wordIndex + 1;
+          recordWordSnapshot(nextInputs, "", nextIndex);
+
+          if (nextIndex >= words.length) {
+            setWordInputs(nextInputs);
+            // Keep input value in sync for controlled component
+            e.target.value = "";
+            finishTest();
+            return;
+          }
+
+          setWordInputs(nextInputs);
+          setWordIndex(nextIndex);
+          const remainder = inserted.slice(spaceIdx + 1);
+          setTyped(remainder);
+          // Keep DOM value in sync (controlled input will re-render, but ensure immediate)
+          e.target.value = remainder;
+
+          requestAnimationFrame(() => {
+            if (!activeWordRef.current) {
+              return;
+            }
+            const word = activeWordRef.current;
+            const lineH = word.offsetHeight + 4;
+            const row = Math.round(word.offsetTop / lineH);
+            setRowOffset(Math.max(0, row - 1) * lineH);
+          });
+          return;
+        }
+
+        // Normal text insertion (no space)
+        ensureStarted();
+        markTypingActive();
+        allTypedRef.current += inserted.length;
+        const cw = words[wordIndex] ?? "";
+        const baseIdx = typed.length;
+        for (let i = 0; i < inserted.length; i++) {
+          const ch = inserted[i];
+          const pos = baseIdx + i;
+          const isWrong = pos >= cw.length || ch !== cw[pos];
+          if (isWrong) {
+            onWrongKey?.();
+          }
+          try {
+            recordKeyResult(ch, !isWrong);
+          } catch {}
+        }
+
+        setTyped(newValue);
+
+        // Auto-finish last word without needing space (words/quote/learn mode)
+        const isLastWord = wordIndex + 1 >= words.length;
+        if (
+          isLastWord &&
+          newValue.length >= (words[wordIndex]?.length ?? 0) &&
+          mode !== "time" &&
+          mode !== "zen"
+        ) {
+          const cw2 = words[wordIndex] ?? "";
+          for (let i = 0; i < Math.min(newValue.length, cw2.length); i++) {
+            if (newValue[i] !== cw2[i]) {
+              errorsThisSecondRef.current++;
+            }
+          }
+          if (newValue.length > cw2.length) {
+            errorsThisSecondRef.current++;
+          }
+          const nextInputs = [...wordInputs, newValue];
+          setWordInputs(nextInputs);
+          recordWordSnapshot(nextInputs, "", wordIndex + 1);
+          finishTest();
+        }
+        return;
+      }
+
+      // Same length but different content (autocorrect / replacement)
+      ensureStarted();
+      markTypingActive();
+      setTyped(newValue);
+    },
+    [
+      typed,
+      wordIndex,
+      words,
+      wordInputs,
+      mode,
+      finished,
+      ensureStarted,
+      markTypingActive,
+      onWrongKey,
+      finishTest,
+      recordWordSnapshot,
+    ]
+  );
+
   const handleFocus = () => {
     if (pauseRefocusRef.current) {
       return;
@@ -934,6 +1182,9 @@ export function useTypingTest({
     activeWordRef,
     // Handlers
     handleKeyDown,
+    handleInputChange,
+    handleCompositionStart,
+    handleCompositionEnd,
     handleFocus,
     handleInputBlur,
     handleInputFocus,
